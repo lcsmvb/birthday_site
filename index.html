@@ -108,17 +108,16 @@ function afficher(liste) {
   var oui = 0, non = 0;
   liste.sort(function (a, b) { return (b.t || 0) - (a.t || 0); });
   liste.forEach(function (r) {
-    var nb = r.nb > 0 ? r.nb : 1;
-    if (r.rep === "oui") oui += nb; else non++;
+    if (r.rep === "oui") oui++; else non++;
     var li = document.createElement("li");
     var nom = document.createElement("span"); nom.textContent = r.nom;
     var etat = document.createElement("span");
     etat.className = r.rep === "oui" ? "oui" : "non";
-    etat.textContent = r.rep === "oui" ? "✅ Vient" + (nb > 1 ? " (" + nb + " pers.)" : "") : "❌ Ne vient pas";
+    etat.textContent = r.rep === "oui" ? "✅ Vient" : "❌ Ne vient pas";
     li.appendChild(nom); li.appendChild(etat); ul.appendChild(li);
   });
-  $("cOui").textContent = "✅ " + oui + (oui > 1 ? " personnes" : " personne");
-  $("cNon").textContent = "❌ " + non + (non > 1 ? " absents" : " absent");
+  $("cOui").textContent = "✅ " + oui;
+  $("cNon").textContent = "❌ " + non;
   if (!liste.length) ul.innerHTML = "<li>Personne n’a encore répondu, sois le premier !</li>";
 }
 
@@ -133,12 +132,10 @@ $("rsend").onclick = function () {
   var choix = document.querySelector('input[name="rep"]:checked');
   if (!nom) { $("rmsg").textContent = "Indique ton prénom 😉"; return; }
   if (!choix) { $("rmsg").textContent = "Dis-nous si tu viens ou non !"; return; }
-  var nb = choix.value === "oui" ? Math.min(10, Math.max(1, parseInt($("rnb").value, 10) || 1)) : 0;
   $("rsend").disabled = true;
-  enregistrer({ nom: nom, rep: choix.value, nb: nb, t: Date.now() }).then(function () {
+  enregistrer({ nom: nom, rep: choix.value, t: Date.now() }).then(function () {
     $("rmsg").textContent = choix.value === "oui" ? "Merci, à bientôt ! 🎉" : "Dommage, merci d’avoir répondu !";
     $("rprenom").value = "";
-    $("rnb").value = 1;
     $("rsend").disabled = false;
     rafraichir();
   }).catch(function () {
@@ -146,12 +143,6 @@ $("rsend").onclick = function () {
     $("rsend").disabled = false;
   });
 };
-
-document.querySelectorAll('input[name="rep"]').forEach(function (el) {
-  el.onchange = function () {
-    $("nbWrap").classList.toggle("hidden", el.value !== "oui" || !el.checked);
-  };
-});
 
 rafraichir();
 </script>
