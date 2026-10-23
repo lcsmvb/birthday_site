@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Anniversaire 🎂</title>
+<title> lucas je t'aime 💘 </title>
 <style>
 :root{--bg:#fff7ec;--card:#ffffff;--text:#2a1b3d;--muted:#6b5b7e;--accent:#ff4d8d;--accent2:#ffb703;--line:#f0dfc8}
 @media (prefers-color-scheme:dark){:root{--bg:#1a1226;--card:#261a38;--text:#fdf3ff;--muted:#b9a8cf;--line:#3b2b55}}
@@ -50,8 +50,11 @@ ul.liste li{display:flex;justify-content:space-between;align-items:center;backgr
     <div class="info">
       <div><b>Quand</b>Vendredi 27 novembre 2026, à 19h</div>
       <div><b>Où</b>550 Route de Laudun, Résidence La Garrigue, Villa 14</div>
-      <div><b>Infos</b> 07 49 08 17 17  </div>
+      <div><b>Infos</b> Envoie-moi un message si tu veux dormir bisous  </div>
     </div>
+    <p>Aide-moi à construire la playlist de la soirée 🎶</p>
+    <a class="btn" href="playlist.html">Voir la playlist →</a>
+  </section>
     <p>Aide-moi à construire la playlist de la soirée 🎶</p>
     <a class="btn" href="playlist.html">Voir la playlist →</a>
   </section>
@@ -81,11 +84,15 @@ ul.liste li{display:flex;justify-content:space-between;align-items:center;backgr
 // Si tu laisses vide, le site fonctionne en mode test (les réponses restent sur ton appareil).
 var DB_URL = "https://anniv-c1936-default-rtdb.europe-west1.firebasedatabase.app";
 
+DB_URL = DB_URL.trim().replace(/\/+$/, "");
 var $ = function (id) { return document.getElementById(id); };
 
 function charger() {
   if (DB_URL) {
-    return fetch(DB_URL + "/rsvp.json").then(function (r) { return r.json(); }).then(function (d) {
+    return fetch(DB_URL + "/rsvp.json").then(function (r) {
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.json();
+    }).then(function (d) {
       return d ? Object.keys(d).map(function (k) { return d[k]; }) : [];
     });
   }
@@ -95,7 +102,9 @@ function charger() {
 
 function enregistrer(rep) {
   if (DB_URL) {
-    return fetch(DB_URL + "/rsvp.json", { method: "POST", body: JSON.stringify(rep) });
+    return fetch(DB_URL + "/rsvp.json", { method: "POST", body: JSON.stringify(rep) }).then(function (r) {
+      if (!r.ok) throw new Error("HTTP " + r.status);
+    });
   }
   return charger().then(function (l) {
     l.push(rep);
@@ -138,8 +147,9 @@ $("rsend").onclick = function () {
     $("rprenom").value = "";
     $("rsend").disabled = false;
     rafraichir();
-  }).catch(function () {
-    $("rmsg").textContent = "Oups, l’envoi a échoué. Réessaie.";
+  }).catch(function (e) {
+    console.error(e);
+    $("rmsg").textContent = "Oups, l’envoi a échoué (" + (e && e.message ? e.message : "erreur") + "). Réessaie.";
     $("rsend").disabled = false;
   });
 };
