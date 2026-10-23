@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Playlist 🎧</title>
+<style>
+:root{--bg:#fff7ec;--card:#ffffff;--text:#2a1b3d;--muted:#6b5b7e;--accent:#ff4d8d;--accent2:#ffb703;--line:#f0dfc8}
+@media (prefers-color-scheme:dark){:root{--bg:#1a1226;--card:#261a38;--text:#fdf3ff;--muted:#b9a8cf;--line:#3b2b55}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Trebuchet MS",system-ui,-apple-system,sans-serif;min-height:100vh;display:flex;justify-content:center;padding:24px 16px}
+main{width:100%;max-width:520px}
+.card{background:var(--card);border:2px solid var(--line);border-radius:24px;padding:28px 22px;text-align:center;box-shadow:0 10px 30px rgba(255,77,141,.15)}
+.emoji{font-size:48px}
+h1{font-size:2.2rem;margin:8px 0;line-height:1.1}
+h1 span{color:var(--accent)}
+.age{display:inline-block;background:var(--accent);color:#fff;font-weight:700;border-radius:999px;padding:6px 18px;font-size:1.3rem;margin:6px 0 14px}
+.info{display:grid;gap:10px;margin:18px 0;text-align:left}
+.info div{background:var(--bg);border-radius:14px;padding:12px 14px;border:1px solid var(--line)}
+.info b{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+p{color:var(--muted);line-height:1.5}
+button,.btn{font:inherit;font-weight:700;border:0;border-radius:999px;padding:14px 24px;cursor:pointer;background:var(--accent);color:#fff;text-decoration:none;display:inline-block;margin-top:6px}
+.btn2{background:var(--accent2);color:#2a1b3d}
+.ghost{background:transparent;color:var(--muted);border:1px solid var(--line);font-weight:600}
+input,textarea{width:100%;font:inherit;padding:12px 14px;border-radius:14px;border:2px solid var(--line);background:var(--bg);color:var(--text);margin:6px 0}
+label{display:block;text-align:left;font-size:.85rem;color:var(--muted);margin-top:8px}
+.msg{font-size:.9rem;margin-top:10px;min-height:1.2em;color:var(--accent)}
+hr{border:0;border-top:1px dashed var(--line);margin:22px 0}
+</style>
+</head>
+<body>
+<main>
+  <section class="card">
+    <div class="emoji">🎧</div>
+    <h1>La <span>playlist</span> de l’anniv</h1>
+    <p>Ajoute tes sons préférés, ou envoie une suggestion !</p>
+
+    <!-- ✏️ Colle ici le lien de ta playlist Spotify à la place de href="..." -->
+    <a class="btn" href="https://open.spotify.com/playlist/6uQhSpzwgCpvVXcewmOjUU?si=03c5425e87a74b37&pt=faaa41a7eeb49c70183b5e5f620928e0" target="_blank" rel="noopener">Ouvrir la playlist Spotify</a>
+
+    <hr>
+    <h2 style="margin:0 0 4px">Suggère un son</h2>
+    <label for="prenom">Ton prénom</label>
+    <input id="prenom" placeholder="Ex : Chloé Chateau" maxlength="40">
+    <label for="titre">Titre et artiste</label>
+    <input id="titre" placeholder="Ex : Hava Nagila – Big B" maxlength="120">
+    <label for="mot">Un petit mot (facultatif)</label>
+    <textarea id="mot" rows="2" maxlength="200"></textarea>
+    <button id="send" class="btn2">Envoyer ma suggestion</button>
+    <div class="msg" id="msg"></div>
+    <br>
+    <a class="btn ghost" href="index.html">← Retour à l’invitation</a>
+  </section>
+</main>
+
+<script>
+// ✏️ Ton numéro WhatsApp au format international, sans + ni espaces (ex : 33612345678).
+// Si tu laisses vide, la suggestion est simplement copiée dans le presse-papiers.
+var WHATSAPP = "";
+
+document.getElementById("send").onclick = function () {
+  var p = document.getElementById("prenom").value.trim();
+  var t = document.getElementById("titre").value.trim();
+  var m = document.getElementById("mot").value.trim();
+  var msg = document.getElementById("msg");
+  if (!t) { msg.textContent = "Indique au moins un titre 😉"; return; }
+
+  var texte = "🎶 Suggestion playlist anniv" + (p ? " de " + p : "") + " : " + t + (m ? " — " + m : "");
+
+  if (WHATSAPP) {
+    window.open("https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(texte), "_blank");
+    msg.textContent = "Il ne reste qu’à appuyer sur « envoyer » dans WhatsApp !";
+  } else {
+    try {
+      navigator.clipboard.writeText(texte);
+      msg.textContent = "Suggestion copiée ! Colle-la dans un message à l’organisateur.";
+    } catch (e) {
+      msg.textContent = texte;
+    }
+  }
+};
+</script>
+</body>
+</html>
